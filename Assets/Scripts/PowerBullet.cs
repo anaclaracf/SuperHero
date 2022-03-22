@@ -6,6 +6,7 @@ public class PowerBullet : MonoBehaviour
 {
         public GameObject prefab;
         public Rigidbody attachPoint;
+        public float MoveSpeed = 3.0f;
         
         public SteamVR_Action_Boolean botao = SteamVR_Input.GetAction<SteamVR_Action_Boolean>("InteractUI");
 
@@ -47,6 +48,8 @@ public class PowerBullet : MonoBehaviour
                     rigidbody.velocity = trackedObj.GetVelocity();
                     rigidbody.angularVelocity = trackedObj.GetAngularVelocity();
                 }
+                
+
                 rigidbody.maxAngularVelocity = rigidbody.angularVelocity.magnitude;
             }
         }
