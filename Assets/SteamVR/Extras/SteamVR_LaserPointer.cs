@@ -11,9 +11,13 @@ namespace Valve.VR.Extras
         //public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.__actions_default_in_InteractUI;
         public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.GetBooleanAction("InteractUI");
 
+        public SteamVR_ActionSet actionSet;
+        public SteamVR_Action_Single actionThrottle = SteamVR_Input.GetAction<SteamVR_Action_Single>("buggy", "Throttle");
+        public SteamVR_Input_Sources hand;
+
         public bool active = true;
         public Color color;
-        public float thickness = 0.002f;
+        public float thickness = 0.000f;
         public Color clickColor = Color.green;
         public GameObject holder;
         public GameObject pointer;
@@ -29,6 +33,8 @@ namespace Valve.VR.Extras
 
         private void Start()
         {
+            actionSet.Activate(hand);
+
             if (pose == null)
                 pose = this.GetComponent<SteamVR_Behaviour_Pose>();
             if (pose == null)
@@ -78,6 +84,7 @@ namespace Valve.VR.Extras
 
         public virtual void OnPointerClick(PointerEventArgs e)
         {
+            StartCoroutine(MoveFromTo(e.target.transform, e.target.transform.position, transform.position, 8.0f));
             if (PointerClick != null)
                 PointerClick(this, e);
         }
@@ -91,6 +98,15 @@ namespace Valve.VR.Extras
 
         private void Update()
         {
+    
+            float throttle = actionThrottle.GetAxis(hand);
+
+            if(throttle > 0.1){
+                thickness = 0.002f;
+            } else {
+                thickness = 0.00f;
+            }
+
             if (!isActive)
             {
                 isActive = true;
@@ -142,10 +158,11 @@ namespace Valve.VR.Extras
                 OnPointerClick(argsClick);
             }
 
-            if (interactWithUI != null && interactWithUI.GetState(pose.inputSource))
+            if (interactWithUI != null && interactWithUI.GetState(pose.inputSource) && throttle == 1)
             {
                 pointer.transform.localScale = new Vector3(thickness * 5f, thickness * 5f, dist);
                 pointer.GetComponent<MeshRenderer>().material.color = clickColor;
+
             }
             else
             {
@@ -154,7 +171,20 @@ namespace Valve.VR.Extras
             }
             pointer.transform.localPosition = new Vector3(0f, 0f, dist / 2f);
         }
+        IEnumerator MoveFromTo(Transform objectToMove, Vector3 a, Vector3 b, float speed)
+        {
+            float step = (speed / (a - b).magnitude) * Time.fixedDeltaTime;
+            float t = 0;
+            while (t <= 1.0f)
+            {
+                t += step;
+                objectToMove.position = Vector3.Lerp(a, b, t);
+                yield return new WaitForFixedUpdate();
+            }
+            objectToMove.position = b;
+        }
     }
+
 
     public struct PointerEventArgs
     {
