@@ -39,7 +39,6 @@ public class Speed : MonoBehaviour
 
         // rb.velocity (transform.forward * 100);
 
-        print(transform.forward);
     }
 
     void HandAttachedUpdate(Hand hand)
