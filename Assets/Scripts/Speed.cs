@@ -31,7 +31,7 @@ GameObject hand ;
     void Update()
     {
         if(GetComponent<FixedJoint>() != null){
-            direcao = hand.transform.;
+            direcao = hand.transform.forward;
         }
 
         //print(transform.parent);
