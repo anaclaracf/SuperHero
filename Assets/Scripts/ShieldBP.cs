@@ -34,5 +34,14 @@ public SteamVR_ActionSet actionSet;
             rend.enabled=!rend.enabled;
         }
 
+
+    }
+    private void OnTriggerEnter(Collider other) {
+        if(rend.enabled){
+            
+            Destroy(other.gameObject);
+        }
+        
+        
     }
 }
